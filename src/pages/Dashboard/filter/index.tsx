@@ -1,9 +1,9 @@
 import { Button } from 'antd'
-import { useEffect, useState } from 'react'
-import { atom, useRecoilState } from 'recoil'
+import { useState } from 'react'
+import { useRecoilState } from 'recoil'
 import Selector from './selector'
 import * as recoilState from '../../../recoilState'
-import { useMutation } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { filterDateRequest } from 'src/utils/request'
 
 const Filter = () => {
@@ -11,19 +11,15 @@ const Filter = () => {
   const [subject, setSubject] = useState('Maths')
   const [searchData, setSearchData] = useRecoilState(recoilState.searchData)
 
-  const mutation = useMutation(
-    // @ts-ignore
-    filterDateRequest,
+  const { refetch } = useQuery(
+    ['fetchData'],
+    () => filterDateRequest({ school, subject }),
     {
       onSuccess: (res: any) => {
-        setSearchData(res?.data)
+        setSearchData(res.data)
       },
     }
   )
-
-  useEffect(() => {
-    school && subject && mutation.mutate({ school, subject })
-  }, [])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', padding: '20px' }}>
@@ -50,7 +46,8 @@ const Filter = () => {
       <Button
         type="default"
         style={{ alignSelf: 'flex-end' }}
-        onClick={() => mutation.mutate({ school, subject })}
+        // @ts-ignore
+        onClick={refetch}
       >
         apply
       </Button>
