@@ -6,6 +6,7 @@ import { useRecoilState } from 'recoil'
 import * as ROUTES from '../../routes/constant'
 import * as recoilState from '../../recoilState'
 import { loginRequest, signupRequest } from 'src/utils/request'
+import { useEffect, useState } from 'react'
 
 interface ProfileData {
   username: string
@@ -17,14 +18,23 @@ const Login = () => {
   const [profileData, setProfileData] = useRecoilState(recoilState.profileData)
   const navigate = useNavigate()
 
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    setError('')
+  }, [pathname])
+
   const mutation = useMutation<ProfileData>(
     // @ts-ignore
     pathname === ROUTES.LOGIN ? loginRequest : signupRequest,
     {
       onSuccess: (res: any) => {
-        setProfileData(res)
-        localStorage.setItem('username', res.username)
+        setProfileData(res.data)
         navigate(ROUTES.DASHBOARD, { replace: true })
+      },
+      onError: (res: any) => {
+        console.log(res.response.data)
+        setError(res.response.data)
       },
     }
   )
@@ -89,6 +99,7 @@ const Login = () => {
             span: 16,
           }}
         >
+          <div style={{ color: 'red' }}>{error}</div>
           {pathname === ROUTES.LOGIN ? (
             <Link to={ROUTES.SIGNUP}>
               Haven't got account yet? SIGN UP here

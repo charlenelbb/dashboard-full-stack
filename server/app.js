@@ -43,7 +43,7 @@ app.post('/login', async (req, res) => {
 
         res.cookie('token', token)
 
-        return res.status(201).send('welcome')
+        return res.status(201).send({ username })
       }
     }
 
@@ -83,7 +83,7 @@ app.post('/signup', async (req, res) => {
     // return new user
     res.cookie('token', token)
 
-    res.status(200).json('signup success, welcome')
+    return res.status(201).send({ username })
   } catch (error) {}
 })
 
