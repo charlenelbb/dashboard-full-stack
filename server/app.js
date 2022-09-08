@@ -2,12 +2,12 @@ require('dotenv').config()
 
 const express = require('express')
 const bodyParser = require('body-parser')
-var bcrypt = require('bcryptjs')
 const cors = require('cors')
 const db = require('./db')
 const createAllTables = require('./db/util')
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
+const { matchHashPassword, getHashPassword } = require('./util/bcrypt')
 // const createAllTables = require('./util')
 // const User = require('./db').User
 const app = express()
@@ -33,7 +33,8 @@ app.post('/login', async (req, res) => {
       [username]
     )
     if (oldUser?.rows?.length) {
-      if (oldUser.rows[0].password !== password) {
+      const hash = oldUser.rows[0].password
+      if (!matchHashPassword(password, hash)) {
         return res.status(409).send('wrong username or password')
       } else {
         // Create token
@@ -77,7 +78,7 @@ app.post('/signup', async (req, res) => {
     // Create user in our database
     await db.query(
       'INSERT INTO dashboard_users (username, password, token) VALUES ($1, $2, $3)',
-      [username, password, token]
+      [username, getHashPassword(password), token]
     )
 
     // return new user
