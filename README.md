@@ -18,14 +18,6 @@ yarn
 yarn server
 ```
 
-## 3. Run Backend
-
-```
-cd dashboard-full-stack
-yarn
-yarn server
-```
-
 ## 4. Run Frontend
 
 ```
