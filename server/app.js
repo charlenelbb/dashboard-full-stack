@@ -12,7 +12,7 @@ const cookieParser = require('cookie-parser')
 // const User = require('./db').User
 const app = express()
 
-const PORT = process.env.PORT || 8080
+const PORT = process.env.SERVER_PORT || 8000
 
 const corsOptions = { origin: 'http://localhost:3000', credentials: true }
 
